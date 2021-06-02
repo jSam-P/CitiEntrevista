@@ -9,34 +9,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.citi.app.tarea.controllers.service.HeaderService;
+import com.citi.app.tarea.service.HeaderService;
 
 @RestController
+@RequestMapping("/start")
 public class HeaderController {	
 	
 	@Autowired
-	HeaderService headerService;
+	private HeaderService headerService;
 	
-	@GetMapping("/getHeaders")
+	/**
+	 * Obtiene los headers de HttpServletRequest 
+	 * 
+	 * @param request
+	 * @return
+	 */	
+	@GetMapping(path = "/getHeaders")
 	public ResponseEntity<Map<String, List<String>>> getHeaders(HttpServletRequest request){
 		
-		Map<String, List<String>> map = headerService.listarHeaders(request);
+		Map<String, List<String>> map = headerService.getHeaders(request);
 
 		return new ResponseEntity<Map<String,List<String>>>(map,HttpStatus.OK);
 	}
 	
-	@GetMapping("/getSelectedHeaders")
+	/**
+	 * Obtiene lo headers especificos de HttpServletRequest
+	 * 
+	 * @param request
+	 * @param headerNames
+	 * @return
+	 */
+	
+	@GetMapping(path = "/getSelectedHeaders")
 	public ResponseEntity<Map<String, List<String>>> getSelectedHeaders(HttpServletRequest request, 
 			@RequestParam List<String> headerNames){
 		
-		Map<String, List<String>> map = headerService.listarSelectedHeaders(request, headerNames);
+		Map<String, List<String>> map = headerService.getSelectedHeaders(request, headerNames);
 
 		return new ResponseEntity<Map<String,List<String>>>(map,HttpStatus.OK);
 	}
 
+	/**
+	 * Remueve elementos duplicados de la lista.
+	 * 
+	 * @param numbers
+	 * @return
+	 */
+	@GetMapping(path = "/removeDuplicates")
+	public ResponseEntity<List<Integer>> removeDuplicates(@RequestParam(required = true) List<Integer> numbers){
+		
+		return new ResponseEntity<List<Integer>>(headerService.removeDuplicates(numbers),HttpStatus.OK);
+	}
 	
 }
